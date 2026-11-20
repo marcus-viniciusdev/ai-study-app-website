@@ -15,6 +15,7 @@
         input[type="email"] { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         button[type="submit"] { width: 100%; background: #dc2626; color: #fff; border: none; padding: 12px; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; }
         button[type="submit"]:hover { background: #b91c1c; }
+        button[type="submit"]:disabled { background: #9ca3af; cursor: not-allowed; }
         .notice { background: #fff3e0; color: #e65100; padding: 12px; border-radius: 6px; font-size: 0.85em; margin-top: 15px; }
     </style>
 </head>
@@ -69,36 +70,36 @@
         </div>
     </div>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-      import { getAuth, sendSignInLinkToEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    <script>
+      const DELETION_EMAIL_FUNCTION_URL =
+        "https://southamerica-east1-ai-study-app-abec8.cloudfunctions.net/sendDeletionConfirmationEmail";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyD-n0-VWPJXv2TwjztHuzelHBMk93uGchE",
-        authDomain: "ai-study-app-abec8.firebaseapp.com",
-        projectId: "ai-study-app-abec8",
-        storageBucket: "ai-study-app-abec8.firebasestorage.app",
-        messagingSenderId: "521923125430",
-        appId: "1:521923125430:web:e7936b87645a2300c7c617"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-
-      // URL da segunda página (confirmação e exclusão imediata)
       const confirmUrl = new URL("confirm-deletion.html", window.location.href).href;
-
-      const actionCodeSettings = {
-        url: confirmUrl,
-        handleCodeInApp: true,
-      };
 
       window.handleDeletionSubmit = async (e, lang) => {
         e.preventDefault();
+        const form = e.target;
+        const submitBtn = form.querySelector('button[type="submit"]');
         const email = document.getElementById(`email-${lang}`).value.trim();
 
+        submitBtn.disabled = true;
+
         try {
-          await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+          const response = await fetch(DELETION_EMAIL_FUNCTION_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: email,
+              lang: lang,
+              continueUrl: confirmUrl
+            })
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to send confirmation email.");
+          }
+
           window.localStorage.setItem("emailForSignIn", email);
 
           const msgs = {
@@ -107,9 +108,12 @@
             es: "¡Correo de confirmación enviado! Revise su bandeja de entrada y haga clic en el enlace para eliminar sus datos de inmediato."
           };
           alert(msgs[lang]);
+          form.reset();
         } catch (error) {
-          console.error("Error sending sign-in link:", error);
+          console.error("Error sending confirmation email:", error);
           alert("Error: " + error.message);
+        } finally {
+          submitBtn.disabled = false;
         }
       };
 

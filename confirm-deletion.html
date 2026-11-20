@@ -25,7 +25,7 @@
             <h1>Account Data Deleted</h1>
             <div class="success-box">
                 <p><strong>Deletion completed immediately.</strong></p>
-                <p>Your account data in Firestore has been permanently removed.</p>
+                <p>Your account data has been permanently removed.</p>
             </div>
         </div>
 
@@ -40,18 +40,8 @@
       import {
         getAuth,
         isSignInWithEmailLink,
-        signInWithEmailLink,
-        deleteUser
+        signInWithEmailLink
       } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-      import {
-        getFirestore,
-        doc,
-        deleteDoc,
-        collection,
-        query,
-        where,
-        getDocs
-      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyD-n0-VWPJXv2TwjztHuzelHBMk93uGchE",
@@ -62,27 +52,18 @@
         appId: "1:521923125430:web:e7936b87645a2300c7c617"
       };
 
+      const EXECUTE_DELETION_FUNCTION_URL =
+        "https://southamerica-east1-ai-study-app-abec8.cloudfunctions.net/executeImmediateAccountDeletion";
+
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
-      const db = getFirestore(app);
 
-      async function deleteUserFirestoreData(uid, email) {
-        // Remove documento principal pelo UID do Firebase Auth (caso exista)
-        await deleteDoc(doc(db, "users", uid)).catch(() => {});
-        await deleteDoc(doc(db, "deletion_requests", uid)).catch(() => {});
-
-        // Remove notificações vinculadas ao UID ou e-mail
-        const notifByUid = await getDocs(query(collection(db, "notifications"), where("toUid", "==", uid)));
-        for (const d of notifByUid.docs) {
-          await deleteDoc(d.ref);
+      function showError(msg) {
+        document.getElementById("loading-state").style.display = "none";
+        if (msg) {
+          document.getElementById("error-message").innerText = msg;
         }
-
-        if (email) {
-          const usersByEmail = await getDocs(query(collection(db, "users"), where("email", "==", email)));
-          for (const d of usersByEmail.docs) {
-            await deleteDoc(d.ref);
-          }
-        }
+        document.getElementById("error-state").style.display = "block";
       }
 
       if (isSignInWithEmailLink(auth, window.location.href)) {
@@ -95,31 +76,31 @@
           signInWithEmailLink(auth, email.trim(), window.location.href)
             .then(async (result) => {
               window.localStorage.removeItem("emailForSignIn");
-              const user = result.user;
+              const idToken = await result.user.getIdToken(true);
 
-              await deleteUserFirestoreData(user.uid, user.email);
-
-              // Tenta remover também a conta no Firebase Auth se a sessão for recente
-              await deleteUser(user).catch((authErr) => {
-                console.warn("Auth user deletion skipped/needs recent login:", authErr.message);
+              const response = await fetch(EXECUTE_DELETION_FUNCTION_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ idToken: idToken })
               });
+
+              const data = await response.json();
+              if (!response.ok) {
+                throw new Error(data.error || "Failed to complete account deletion.");
+              }
 
               document.getElementById("loading-state").style.display = "none";
               document.getElementById("success-state").style.display = "block";
             })
             .catch((error) => {
               console.error("Error confirming deletion:", error);
-              document.getElementById("loading-state").style.display = "none";
-              document.getElementById("error-message").innerText = error.message;
-              document.getElementById("error-state").style.display = "block";
+              showError(error.message);
             });
         } else {
-          document.getElementById("loading-state").style.display = "none";
-          document.getElementById("error-state").style.display = "block";
+          showError("Email confirmation was canceled or missing.");
         }
       } else {
-        document.getElementById("loading-state").style.display = "none";
-        document.getElementById("error-state").style.display = "block";
+        showError();
       }
     </script>
 </body>
