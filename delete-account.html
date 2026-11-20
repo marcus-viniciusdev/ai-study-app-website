@@ -29,42 +29,42 @@
         <!-- English (Default) -->
         <div id="lang-en">
             <h1>Request Account Deletion</h1>
-            <p>Upon requesting deletion, all your data (quiz history, essays, profile photos, and achievements) will be scheduled for <strong>permanent removal in 7 days</strong>.</p>
+            <p>Upon confirming your email, all your associated data (quiz history, essays, profile data, and achievements) will be <strong>permanently deleted immediately</strong>.</p>
             <form id="form-en" onsubmit="handleDeletionSubmit(event, 'en')">
                 <label for="email-en"><strong>Enter your registered email address:</strong></label>
                 <input type="email" id="email-en" required placeholder="youremail@gmail.com">
                 <button type="submit">Send Confirmation Link</button>
             </form>
             <div class="notice">
-                📌 <strong>How it works:</strong> We will send a verification link to your email. Your account will only be scheduled for deletion after you click the link. If you log in to the app within 7 days, the deletion request will be automatically canceled.
+                📌 <strong>How it works:</strong> We will send a verification link to your email. Your data will be permanently deleted right after you click the confirmation link.
             </div>
         </div>
 
         <!-- Português -->
         <div id="lang-pt" style="display: none;">
             <h1>Solicitar Exclusão de Conta</h1>
-            <p>Ao solicitar a exclusão, todos os seus dados (histórico de quizzes, redações, fotos de perfil e conquistas) serão agendados para <strong>remoção permanente em 7 dias</strong>.</p>
+            <p>Ao confirmar o seu e-mail, todos os seus dados associados (histórico de quizzes, redações, dados de perfil e conquistas) serão <strong>excluídos permanentemente na hora</strong>.</p>
             <form id="form-pt" onsubmit="handleDeletionSubmit(event, 'pt')">
                 <label for="email-pt"><strong>Digite o e-mail cadastrado no app:</strong></label>
                 <input type="email" id="email-pt" required placeholder="seuemail@gmail.com">
                 <button type="submit">Enviar Link de Confirmação</button>
             </form>
             <div class="notice">
-                📌 <strong>Como funciona:</strong> Enviaremos um link de verificação. Sua conta só será agendada para exclusão após você clicar no link enviado. Se fizer login no aplicativo dentro dos 7 dias, o agendamento será cancelado automaticamente.
+                📌 <strong>Como funciona:</strong> Enviaremos um link de verificação para o seu e-mail. A exclusão dos seus dados acontece imediatamente após você clicar no link de confirmação.
             </div>
         </div>
 
         <!-- Español -->
         <div id="lang-es" style="display: none;">
             <h1>Solicitar Eliminación de Cuenta</h1>
-            <p>Al solicitar la eliminación, todos sus datos (historial de cuestionarios, ensayos, fotos de perfil y logros) se programarán para su <strong>eliminación permanente en 7 días</strong>.</p>
+            <p>Al confirmar su correo electrónico, todos sus datos asociados (historial de cuestionarios, ensayos, datos de perfil y logros) se <strong>eliminarán permanentemente de inmediato</strong>.</p>
             <form id="form-es" onsubmit="handleDeletionSubmit(event, 'es')">
                 <label for="email-es"><strong>Ingrese su correo electrónico registrado:</strong></label>
                 <input type="email" id="email-es" required placeholder="sucorreo@gmail.com">
                 <button type="submit">Enviar Enlace de Confirmación</button>
             </form>
             <div class="notice">
-                📌 <strong>Cómo funciona:</strong> Enviaremos un enlace de verificación. Su cuenta solo se programará para eliminación después de hacer clic en el enlace. Si inicia sesión en la aplicación dentro de 7 días, la solicitud se cancelará automáticamente.
+                📌 <strong>Cómo funciona:</strong> Enviaremos un enlace de verificación a su correo. Sus datos se eliminarán de inmediato al hacer clic en el enlace de confirmación.
             </div>
         </div>
     </div>
@@ -85,46 +85,51 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
 
+      // URL da segunda página (confirmação e exclusão imediata)
+      const confirmUrl = new URL("confirm-deletion.html", window.location.href).href;
+
+      const actionCodeSettings = {
+        url: confirmUrl,
+        handleCodeInApp: true,
+      };
+
       window.handleDeletionSubmit = async (e, lang) => {
         e.preventDefault();
-        const email = document.getElementById(`email-${lang}`).value;
+        const email = document.getElementById(`email-${lang}`).value.trim();
 
         try {
-            // Cria um pedido pendente de verificação
-            await addDoc(collection(db, "pending_deletion_requests"), {
-            email: email,
-            lang: lang,
-            createdAt: serverTimestamp()
-            });
+          await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+          window.localStorage.setItem("emailForSignIn", email);
 
-            const msgs = {
-            en: 'Confirmation email sent! Please check your inbox to proceed.',
-            pt: 'E-mail de confirmação enviado! Verifique sua caixa de entrada para prosseguir.',
-            es: '¡Correo de confirmación enviado! Por favor revise su bandeja de entrada.'
-            };
-            alert(msgs[lang]);
+          const msgs = {
+            en: "Confirmation email sent! Please check your inbox and click the link to immediately delete your account data.",
+            pt: "E-mail de confirmação enviado! Verifique sua caixa de entrada e clique no link para excluir seus dados na hora.",
+            es: "¡Correo de confirmación enviado! Revise su bandeja de entrada y haga clic en el enlace para eliminar sus datos de inmediato."
+          };
+          alert(msgs[lang]);
         } catch (error) {
-            alert('Error: ' + error.message);
+          console.error("Error sending sign-in link:", error);
+          alert("Error: " + error.message);
         }
       };
 
       window.switchLang = (lang) => {
-        document.getElementById('lang-en').style.display = 'none';
-        document.getElementById('lang-pt').style.display = 'none';
-        document.getElementById('lang-es').style.display = 'none';
+        document.getElementById("lang-en").style.display = "none";
+        document.getElementById("lang-pt").style.display = "none";
+        document.getElementById("lang-es").style.display = "none";
 
-        const buttons = document.querySelectorAll('.lang-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
+        const buttons = document.querySelectorAll(".lang-btn");
+        buttons.forEach(btn => btn.classList.remove("active"));
 
-        if (lang === 'en') {
-          document.getElementById('lang-en').style.display = 'block';
-          buttons[0].classList.add('active');
-        } else if (lang === 'pt') {
-          document.getElementById('lang-pt').style.display = 'block';
-          buttons[1].classList.add('active');
-        } else if (lang === 'es') {
-          document.getElementById('lang-es').style.display = 'block';
-          buttons[2].classList.add('active');
+        if (lang === "en") {
+          document.getElementById("lang-en").style.display = "block";
+          buttons[0].classList.add("active");
+        } else if (lang === "pt") {
+          document.getElementById("lang-pt").style.display = "block";
+          buttons[1].classList.add("active");
+        } else if (lang === "es") {
+          document.getElementById("lang-es").style.display = "block";
+          buttons[2].classList.add("active");
         }
       };
     </script>

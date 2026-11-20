@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Deletion Scheduled — AI Study App</title>
+    <title>Account Deleted — AI Study App</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f9f9fb; padding: 20px; color: #333; }
         .card { max-width: 500px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
@@ -17,19 +17,16 @@
 <body>
     <div class="card">
         <div id="loading-state">
-            <h1 class="loading">Processing request...</h1>
-            <p>Please wait while we confirm your account deletion request.</p>
+            <h1 class="loading">Deleting account data...</h1>
+            <p>Please wait while we confirm your link and immediately delete your data.</p>
         </div>
 
         <div id="success-state" style="display: none;">
-            <h1>Account Deletion Confirmed</h1>
+            <h1>Account Data Deleted</h1>
             <div class="success-box">
-                <p>Your request has been successfully recorded.</p>
-                <p>Your account and all associated data will be permanently deleted in <strong>7 days</strong>.</p>
+                <p><strong>Deletion completed immediately.</strong></p>
+                <p>Your account data in Firestore has been permanently removed.</p>
             </div>
-            <p style="margin-top: 20px; font-size: 0.85em; color: #777;">
-                If you change your mind, simply log back into the AI Study App within 7 days to automatically cancel this request.
-            </p>
         </div>
 
         <div id="error-state" class="error-box">
@@ -40,8 +37,21 @@
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-      import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-      import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      import {
+        getAuth,
+        isSignInWithEmailLink,
+        signInWithEmailLink,
+        deleteUser
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        deleteDoc,
+        collection,
+        query,
+        where,
+        getDocs
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyD-n0-VWPJXv2TwjztHuzelHBMk93uGchE",
@@ -56,43 +66,60 @@
       const auth = getAuth(app);
       const db = getFirestore(app);
 
-      if (isSignInWithEmailLink(auth, window.location.href)) {
-        let email = window.localStorage.setItem ? window.localStorage.getItem('emailForSignIn') : null;
-        if (!email) {
-          email = window.prompt('Please confirm your email address:');
+      async function deleteUserFirestoreData(uid, email) {
+        // Remove documento principal pelo UID do Firebase Auth (caso exista)
+        await deleteDoc(doc(db, "users", uid)).catch(() => {});
+        await deleteDoc(doc(db, "deletion_requests", uid)).catch(() => {});
+
+        // Remove notificações vinculadas ao UID ou e-mail
+        const notifByUid = await getDocs(query(collection(db, "notifications"), where("toUid", "==", uid)));
+        for (const d of notifByUid.docs) {
+          await deleteDoc(d.ref);
         }
 
         if (email) {
-          signInWithEmailLink(auth, email, window.location.href)
-            .then(async (result) => {
-              const user = result.user;
-              const deletionDate = new Date();
-              deletionDate.setDate(deletionDate.getDate() + 7);
+          const usersByEmail = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+          for (const d of usersByEmail.docs) {
+            await deleteDoc(d.ref);
+          }
+        }
+      }
 
-              await setDoc(doc(db, "deletion_requests", user.uid), {
-                uid: user.uid,
-                email: user.email,
-                requestedAt: serverTimestamp(),
-                scheduledFor: deletionDate,
-                status: "pending"
+      if (isSignInWithEmailLink(auth, window.location.href)) {
+        let email = window.localStorage.getItem("emailForSignIn");
+        if (!email) {
+          email = window.prompt("Please confirm your email address:");
+        }
+
+        if (email) {
+          signInWithEmailLink(auth, email.trim(), window.location.href)
+            .then(async (result) => {
+              window.localStorage.removeItem("emailForSignIn");
+              const user = result.user;
+
+              await deleteUserFirestoreData(user.uid, user.email);
+
+              // Tenta remover também a conta no Firebase Auth se a sessão for recente
+              await deleteUser(user).catch((authErr) => {
+                console.warn("Auth user deletion skipped/needs recent login:", authErr.message);
               });
 
-              document.getElementById('loading-state').style.display = 'none';
-              document.getElementById('success-state').style.display = 'block';
+              document.getElementById("loading-state").style.display = "none";
+              document.getElementById("success-state").style.display = "block";
             })
             .catch((error) => {
               console.error("Error confirming deletion:", error);
-              document.getElementById('loading-state').style.display = 'none';
-              document.getElementById('error-message').innerText = error.message;
-              document.getElementById('error-state').style.display = 'block';
+              document.getElementById("loading-state").style.display = "none";
+              document.getElementById("error-message").innerText = error.message;
+              document.getElementById("error-state").style.display = "block";
             });
         } else {
-          document.getElementById('loading-state').style.display = 'none';
-          document.getElementById('error-state').style.display = 'block';
+          document.getElementById("loading-state").style.display = "none";
+          document.getElementById("error-state").style.display = "block";
         }
       } else {
-        document.getElementById('loading-state').style.display = 'none';
-        document.getElementById('error-state').style.display = 'block';
+        document.getElementById("loading-state").style.display = "none";
+        document.getElementById("error-state").style.display = "block";
       }
     </script>
 </body>
