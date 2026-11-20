@@ -16,7 +16,10 @@
         button[type="submit"] { width: 100%; background: #dc2626; color: #fff; border: none; padding: 12px; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; }
         button[type="submit"]:hover { background: #b91c1c; }
         button[type="submit"]:disabled { background: #9ca3af; cursor: not-allowed; }
-        .notice { background: #fff3e0; color: #e65100; padding: 12px; border-radius: 6px; font-size: 0.85em; margin-top: 15px; }
+        .notice { background: #fff3e0; color: #e65100; padding: 12px; border-radius: 6px; font-size: 0.85em; margin-top: 15px; line-height: 1.45; }
+        .status-box { display: none; padding: 14px 16px; border-radius: 8px; font-size: 0.9em; line-height: 1.5; margin-top: 18px; }
+        .status-box.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-box.error { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
     </style>
 </head>
 <body>
@@ -68,6 +71,8 @@
                 📌 <strong>Cómo funciona:</strong> Enviaremos un enlace de verificación a su correo. Sus datos se eliminarán de inmediato al hacer clic en el enlace de confirmación.
             </div>
         </div>
+
+        <div id="status-message" class="status-box" role="status" aria-live="polite"></div>
     </div>
 
     <script>
@@ -75,6 +80,21 @@
         "https://senddeletionconfirmationemail-o6dkap6ccq-rj.a.run.app";
 
       const confirmUrl = new URL("confirm-deletion.html", window.location.href).href;
+      let lastStatusType = null;
+
+      const statusMessages = {
+        en: "<strong>Confirmation email sent successfully!</strong> If this email is registered in the app, please check your inbox or spam folder and click the link. Remember to verify that this email is registered in the app.",
+        pt: "<strong>E-mail enviado com sucesso!</strong> Se este e-mail estiver cadastrado no app, confira sua caixa de entrada ou spam e clique no link. Lembre-se de verificar se esse e-mail está cadastrado no app.",
+        es: "<strong>¡Correo enviado con éxito!</strong> Si este correo está registrado en la aplicación, revise su bandeja de entrada o spam y haga clic en el enlace. Recuerde verificar si este correo está registrado en la aplicación."
+      };
+
+      function showStatus(type, htmlContent) {
+        const box = document.getElementById("status-message");
+        lastStatusType = type;
+        box.className = `status-box ${type}`;
+        box.innerHTML = htmlContent;
+        box.style.display = "block";
+      }
 
       window.handleDeletionSubmit = async (e, lang) => {
         e.preventDefault();
@@ -83,6 +103,7 @@
         const email = document.getElementById(`email-${lang}`).value.trim();
 
         submitBtn.disabled = true;
+        document.getElementById("status-message").style.display = "none";
 
         try {
           const response = await fetch(DELETION_EMAIL_FUNCTION_URL, {
@@ -101,17 +122,11 @@
           }
 
           window.localStorage.setItem("emailForSignIn", email);
-
-          const msgs = {
-            en: "Confirmation email sent! Please check your inbox and click the link to immediately delete your account data.",
-            pt: "E-mail de confirmação enviado! Verifique sua caixa de entrada e clique no link para excluir seus dados na hora.",
-            es: "¡Correo de confirmación enviado! Revise su bandeja de entrada y haga clic en el enlace para eliminar sus datos de inmediato."
-          };
-          alert(msgs[lang]);
+          showStatus("success", statusMessages[lang]);
           form.reset();
         } catch (error) {
           console.error("Error sending confirmation email:", error);
-          alert("Error: " + error.message);
+          showStatus("error", `<strong>Error:</strong> ${error.message}`);
         } finally {
           submitBtn.disabled = false;
         }
@@ -134,6 +149,10 @@
         } else if (lang === "es") {
           document.getElementById("lang-es").style.display = "block";
           buttons[2].classList.add("active");
+        }
+
+        if (lastStatusType === "success") {
+          showStatus("success", statusMessages[lang]);
         }
       };
     </script>
