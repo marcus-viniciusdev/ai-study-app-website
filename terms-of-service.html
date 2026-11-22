@@ -49,8 +49,32 @@
         h2 { color: #4527a0; margin-top: 25px; }
         ul { padding-left: 20px; }
         li { margin-bottom: 8px; }
-        .footer { margin-top: 40px; font-size: 0.9em; color: #666; border-top: 1px solid #eee; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .footer a { color: #5e35b1; text-decoration: none; font-weight: 600; }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #ede7f6;
+            color: #4527a0;
+            border: 1px solid #d1c4e9;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+        .back-btn:hover {
+            background: #d1c4e9;
+        }
     </style>
 </head>
 <body>
@@ -65,15 +89,15 @@
         <!-- Conteúdo em Inglês (Default) -->
         <div id="lang-en">
             <h1>Terms of Service</h1>
-            <p><strong>Last updated:</strong> November 07, 2026</p>
+            <p><strong>Last updated:</strong> November 21, 2026</p>
             
-            <p>Welcome to <strong>AI Study App</strong>. By accessing or using our mobile application, you agree to comply with and be bound by these Terms of Service. Please read them carefully.</p>
+            <p>Welcome to <strong>AI Study App</strong>. By using our mobile application and creating an account, you explicitly agree to comply with and be bound by these Terms of Service. Please read them carefully.</p>
 
             <h2>1. Acceptance of Terms</h2>
-            <p>By downloading, installing, or using AI Study App, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to all these terms, do not use the application.</p>
+            <p>These Terms of Service apply whenever you use AI Study App, and you formally agree to these Terms and our Privacy Policy upon creating an account and signing in. If you do not agree to all these terms, do not create an account or use the application.</p>
 
             <h2>2. User Accounts & Google Sign-In</h2>
-            <p>To access features such as essay evaluation, cloud synchronization, and progress tracking, you must sign in using a valid Google account. You are responsible for maintaining the security of your account and credentials.</p>
+            <p>To access features such as essay evaluation, cloud synchronization, and progress tracking, you must create an account by signing in with a valid Google account. By creating your account, you confirm your acceptance of these Terms and remain responsible for maintaining the security of your account and credentials.</p>
 
             <h2>3. Artificial Intelligence & Content</h2>
             <p>Our app utilizes Artificial Intelligence (OpenAI API) to grade essays and offer study recommendations. While we strive for high accuracy, AI feedback should be used as an educational support tool and does not guarantee academic outcomes.</p>
@@ -92,22 +116,22 @@
 
             <div class="footer">
                 <p>&copy; 2026 Coffee Dev Studio. All rights reserved.</p>
-                <a href="index.html">&larr; Back to Home</a>
+                <a class="back-btn" href="index.html">&larr; Back to Home</a>
             </div>
         </div>
 
         <!-- Conteúdo em Português -->
         <div id="lang-pt" style="display: none;">
             <h1>Termos de Serviço</h1>
-            <p><strong>Última atualização:</strong> 07 de novembro de 2026</p>
+            <p><strong>Última atualização:</strong> 21 de novembro de 2026</p>
             
-            <p>Bem-vindo ao <strong>AI Study App</strong>. Ao acessar ou utilizar nosso aplicativo móvel, você concorda em cumprir e estar vinculado a estes Termos de Serviço. Leia-os atentamente.</p>
+            <p>Bem-vindo ao <strong>AI Study App</strong>. Ao utilizar nosso aplicativo móvel e criar uma conta, você concorda expressamente em cumprir e estar vinculado a estes Termos de Serviço. Leia-os atentamente.</p>
 
             <h2>1. Aceitação dos Termos</h2>
-            <p>Ao baixar, instalar ou utilizar o AI Study App, você concorda em vincular-se a estes Termos e à nossa Política de Privacidade. Se você não concordar com todos estes termos, não utilize o aplicativo.</p>
+            <p>Estes Termos de Serviço são válidos durante toda a utilização do AI Study App, e você manifesta sua concordância com estes Termos e com a nossa Política de Privacidade ao criar uma conta no aplicativo. Caso não concorde com todos estes termos, não crie uma conta nem utilize o aplicativo.</p>
 
             <h2>2. Contas de Usuário e Login do Google</h2>
-            <p>Para acessar recursos como avaliação de redações, sincronização em nuvem e acompanhamento de progresso, você deve fazer login usando uma conta do Google válida. Você é responsável por manter a segurança da sua conta e credenciais.</p>
+            <p>Para acessar recursos como avaliação de redações, sincronização em nuvem e acompanhamento de progresso, você deve criar uma conta fazendo login com uma conta do Google válida. Ao criar sua conta, você confirma a aceitação destes Termos e é responsável por manter a segurança da sua conta e credenciais.</p>
 
             <h2>3. Inteligência Artificial e Conteúdo</h2>
             <p>Nosso aplicativo utiliza Inteligência Artificial (OpenAI API) para corrigir redações e oferecer recomendações de estudo. Embora busquemos alta precisão, o feedback da IA deve ser usado como ferramenta de apoio educacional e não garante resultados acadêmicos específicos.</p>
@@ -126,22 +150,22 @@
 
             <div class="footer">
                 <p>&copy; 2026 Coffee Dev Studio. Todos os direitos reservados.</p>
-                <a href="index.html">&larr; Voltar ao Início</a>
+                <a class="back-btn" href="index.html">&larr; Voltar para a Página Inicial</a>
             </div>
         </div>
 
         <!-- Conteúdo em Espanhol -->
         <div id="lang-es" style="display: none;">
             <h1>Términos de Servicio</h1>
-            <p><strong>Última actualización:</strong> 07 de noviembre de 2026</p>
+            <p><strong>Última actualización:</strong> 21 de noviembre de 2026</p>
             
-            <p>Bienvenido a <strong>AI Study App</strong>. Al acceder o utilizar nuestra aplicación móvil, acepta cumplir y estar sujeto a estos Términos de Servicio. Por favor, léalos atentamente.</p>
+            <p>Bienvenido a <strong>AI Study App</strong>. Al utilizar nuestra aplicación móvil y crear una cuenta, usted acepta expresamente cumplir y estar sujeto a estos Términos de Servicio. Por favor, léalos atentamente.</p>
 
             <h2>1. Aceptación de los Términos</h2>
-            <p>Al descargar, instalar o utilizar AI Study App, acepta quedar vinculado por estos Términos y nuestra Política de Privacidad. Si no está de acuerdo con todos estos términos, no utilice la aplicación.</p>
+            <p>Estos Términos de Servicio son válidos al utilizar AI Study App, y usted acepta formalmente estos Términos y nuestra Política de Privacidad al crear una cuenta en la aplicación. Si no está de acuerdo con todos estos términos, no cree una cuenta ni utilice la aplicación.</p>
 
             <h2>2. Cuentas de Usuario y Google Sign-In</h2>
-            <p>Para acceder a funciones como evaluación de ensayos, sincronización en la nube y seguimiento del progreso, debe iniciar sesión con una cuenta de Google válida. Usted es responsable de mantener la seguridad de su cuenta y credenciales.</p>
+            <p>Para acceder a funciones como evaluación de ensayos, sincronización en la nube y seguimiento del progreso, debe crear una cuenta iniciando sesión con una cuenta de Google válida. Al crear su cuenta, confirma su aceptación de estos Términos y es responsable de mantener la seguridad de su cuenta y credenciales.</p>
 
             <h2>3. Inteligencia Artificial y Contenido</h2>
             <p>Nuestra aplicación utiliza Inteligencia Artificial (OpenAI API) para calificar ensayos y ofrecer recomendaciones de estudio. Aunque nos esforzamos por lograr una alta precisión, los comentarios de la IA deben utilizarse como herramienta de apoyo educativo y no garantizan resultados académicos.</p>
@@ -160,7 +184,7 @@
 
             <div class="footer">
                 <p>&copy; 2026 Coffee Dev Studio. Todos los derechos reservados.</p>
-                <a href="index.html">&larr; Volver al Inicio</a>
+                <a class="back-btn" href="index.html">&larr; Volver a la Página Inicial</a>
             </div>
         </div>
     </div>

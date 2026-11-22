@@ -49,12 +49,45 @@
         h2 { color: #4527a0; margin-top: 25px; }
         ul { padding-left: 20px; }
         li { margin-bottom: 8px; }
-        .footer { margin-top: 40px; font-size: 0.9em; color: #666; border-top: 1px solid #eee; padding-top: 20px; }
+        .inline-link {
+            color: #5e35b1;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        .inline-link:hover {
+            color: #4527a0;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #ede7f6;
+            color: #4527a0;
+            border: 1px solid #d1c4e9;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+        .back-btn:hover {
+            background: #d1c4e9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Selector de Idiomas -->
+        <!-- Seletor de Idiomas -->
         <div class="lang-switch">
             <button class="lang-btn active" onclick="switchLang('en')">English</button>
             <button class="lang-btn" onclick="switchLang('pt')">Português</button>
@@ -64,7 +97,7 @@
         <!-- Conteúdo em Inglês (Default) -->
         <div id="lang-en">
             <h1>Privacy Policy</h1>
-            <p><strong>Last updated:</strong> November 07, 2026</p>
+            <p><strong>Last updated:</strong> November 21, 2026</p>
             
             <p>Your privacy is essential to us. This Privacy Policy describes how <strong>AI Study App</strong> collects, uses, stores, and protects your personal information when you use our study, quiz, and Artificial Intelligence essay correction application.</p>
 
@@ -92,20 +125,21 @@
             </ul>
 
             <h2>5. Data Deletion and Rights (LGPD / GDPR)</h2>
-            <p>You can request the permanent deletion of your account and all data stored in the cloud and within the app by sending an email to <strong>coffeedevstudio@gmail.com</strong>. Deletion will be completed within 7 business days.</p>
+            <p>You can request the permanent deletion of your account and all data stored in the cloud and within the app directly through our online deletion form at <a class="inline-link" href="delete-account.html">Delete Account</a>. Once submitted, deletion is completed within 7 business days.</p>
 
             <h2>6. Contact Us</h2>
             <p>If you have any questions regarding this privacy policy, please contact us at: <strong>coffeedevstudio@gmail.com</strong></p>
 
             <div class="footer">
                 <p>&copy; 2026 AI Study App. All rights reserved.</p>
+                <a class="back-btn" href="index.html">&larr; Back to Home</a>
             </div>
         </div>
 
         <!-- Conteúdo em Português -->
         <div id="lang-pt" style="display: none;">
             <h1>Política de Privacidade</h1>
-            <p><strong>Última atualização:</strong> 07 de novembro de 2026</p>
+            <p><strong>Última atualização:</strong> 21 de novembro de 2026</p>
             
             <p>A sua privacidade é fundamental para nós. Esta Política de Privacidade descreve como o <strong>AI Study App</strong> coleta, usa, armazena e protege as suas informações pessoais ao utilizar nosso aplicativo de estudos, quizzes e correção de redações por Inteligência Artificial.</p>
 
@@ -133,20 +167,21 @@
             </ul>
 
             <h2>5. Exclusão de Dados e Direitos (LGPD)</h2>
-            <p>Você pode solicitar a exclusão permanente da sua conta e de todos os seus dados armazenados na nuvem e no aplicativo enviando um e-mail para <strong>coffeedevstudio@gmail.com</strong>. A exclusão é realizada em até 7 dias úteis.</p>
+            <p>Você pode solicitar a exclusão permanente da sua conta e de todos os seus dados armazenados na nuvem e no aplicativo diretamente pelo nosso formulário online acessando o link <a class="inline-link" href="delete-account.html">Exclusão de Conta</a>. Após a solicitação, a exclusão é realizada em até 7 dias úteis.</p>
 
             <h2>6. Contato</h2>
             <p>Em caso de dúvidas sobre esta política, entre em contato pelo e-mail: <strong>coffeedevstudio@gmail.com</strong></p>
 
             <div class="footer">
                 <p>&copy; 2026 AI Study App. Todos os direitos reservados.</p>
+                <a class="back-btn" href="index.html">&larr; Voltar para a Página Inicial</a>
             </div>
         </div>
 
         <!-- Conteúdo em Espanhol -->
         <div id="lang-es" style="display: none;">
             <h1>Política de Privacidad</h1>
-            <p><strong>Última actualización:</strong> 07 de noviembre de 2026</p>
+            <p><strong>Última actualización:</strong> 21 de noviembre de 2026</p>
             
             <p>Su privacidad es esencial para nosotros. Esta Política de Privacidad describe cómo <strong>AI Study App</strong> recopila, utiliza, almacena y protege su información personal al utilizar nuestra aplicación de estudio, cuestionarios y corrección de ensayos mediante Inteligencia Artificial.</p>
 
@@ -174,29 +209,27 @@
             </ul>
 
             <h2>5. Eliminación de Datos y Derechos (LGPD / GDPR)</h2>
-            <p>Puede solicitar la eliminación permanente de su cuenta y de todos sus datos almacenados en la nube y en la aplicación enviando un correo electrónico a <strong>coffeedevstudio@gmail.com</strong>. La eliminación se completará en un plazo de 7 días hábiles.</p>
+            <p>Puede solicitar la eliminación permanente de su cuenta y de todos sus datos almacenados en la nube y en la aplicación directamente a través de nuestro formulario en línea en <a class="inline-link" href="delete-account.html">Eliminar Cuenta</a>. Una vez enviada la solicitud, la eliminación se completará en un plazo de 7 días hábiles.</p>
 
             <h2>6. Contacto</h2>
             <p>Si tiene alguna pregunta sobre esta política de privacidad, contáctenos en: <strong>coffeedevstudio@gmail.com</strong></p>
 
             <div class="footer">
                 <p>&copy; 2026 AI Study App. Todos los derechos reservados.</p>
+                <a class="back-btn" href="index.html">&larr; Volver a la Página Inicial</a>
             </div>
         </div>
     </div>
 
     <script>
         function switchLang(lang) {
-            // Oculta todas as seções
             document.getElementById('lang-en').style.display = 'none';
             document.getElementById('lang-pt').style.display = 'none';
             document.getElementById('lang-es').style.display = 'none';
 
-            // Remove a classe ativa dos botões
             const buttons = document.querySelectorAll('.lang-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
 
-            // Mostra a seção selecionada e ativa o botão correspondente
             if (lang === 'en') {
                 document.getElementById('lang-en').style.display = 'block';
                 buttons[0].classList.add('active');
